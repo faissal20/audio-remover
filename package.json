@@ -1,0 +1,11 @@
+{
+  "name": "audio-remover",
+  "version": "1.0.0",
+  "description": "tool that will take a folder of video to remove the background audion from it.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "faissal220",
+  "license": "ISC"
+}
