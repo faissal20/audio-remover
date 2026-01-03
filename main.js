@@ -12,10 +12,21 @@ let videoFiles = fs.readdirSync(inputFolder).filter(file => {
     return ['.mp4', '.mov', '.avi', '.mkv'].includes(path.extname(file).toLowerCase());
 });
 
-videoFiles.forEach(file => {
+// clean the outputs folder
+let outputFolder = path.join(__dirname, 'outputs');
+
+if (!fs.existsSync(outputFolder)) {
+    fs.mkdirSync(outputFolder);
+} else {
+    fs.readdirSync(outputFolder).forEach(file => {
+        fs.unlinkSync(path.join(outputFolder, file));
+    });
+}
+
+// process each video file
+videoFiles.forEach((file, index) => {
     let videoPath = inputFolder + '/' + file;
-    let file_index = videoFiles.indexOf(file) + 1;
-    backgroundRemoval(videoPath, file_index);
+    backgroundRemoval(videoPath, index);
 });
 
 
