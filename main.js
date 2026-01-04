@@ -23,16 +23,26 @@ if (!fs.existsSync(outputFolder)) {
     });
 }
 
+if (!fs.existsSync('temps')) {
+    fs.mkdirSync('temps');
+} else {
+    fs.readdirSync('temps').forEach(file => {
+        fs.unlinkSync(path.join('temps', file));
+    }
+    );
+}
+
 // process each video file
 videoFiles.forEach((file, index) => {
     let videoPath = inputFolder + '/' + file;
     backgroundRemoval(videoPath, index);
+
 });
 
 
-function backgroundRemoval(videoPath, index) {
+function backgroundRemoval(index) {
 
-    let command = `ffmpeg -i ${videoPath} -an -c:v copy outputs/video_no_audio_${index}.mp4`;
+    let command = `ffmpeg -i ${videoPath} -an -c:v copy temps/video_no_audio_${index}.mp4`;
     // run the command using child_process
     const { exec } = require('child_process');
     exec(command, (error, stdout, stderr) => {
@@ -43,3 +53,17 @@ function backgroundRemoval(videoPath, index) {
         console.log(`Background removed successfully: ${stdout}`);
     });
 }
+
+function fixTheAspectRatio(file, index) {
+    // ffmpeg -i "outputs/video_no_audio_${index}.mp4" -vf "crop=ih*9/16:ih" -c:a copy output_9x16.mp4
+    let command = `ffmpeg -i temps/video_no_audio_${index}.mp4 -vf "crop=ih*9/16:ih" outputs/fixed_aspect_ratio_${index}.mp4`;
+    // run the command using child_process
+    const { exec } = require('child_process');
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error fixing aspect ratio: ${error.message}`);
+            return;
+        }
+        console.log(`Aspect ratio fixed successfully: ${stdout}`);
+    });
+}   
